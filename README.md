@@ -23,23 +23,8 @@ for python3 install _python3-pip_ instead of _python-pip_.
 
 * configparser
 * paho-mqtt
-* pyudev
-* ioctl_opt
-* enum34 (standard installed on Raspbian, but see below)
-* simplejson
-
-```bash
-sudo python -m pip install configparser paho-mqtt pyudev ioctl_opt simplejson
-```
-Use _pip3_ instead of _pip_ when you want to use python3.
-
-If you installed enum on Raspbian in the past, remove it and re-install the python-enum34 package.
-```bash
-pip uninstall enum
-apt-get install --reinstall python-enum34
-
-The standard package python-enum34 is more feature rich than the enum module.
-```
+* enum
+* pyusb
 
 ## Config
 
