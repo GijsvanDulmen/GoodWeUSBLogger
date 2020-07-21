@@ -51,10 +51,12 @@ class MyDaemon(Daemon):
         config = configparser.RawConfigParser()
         config.read('/etc/goodwe/goodwe.conf')
 
-        mqttserver = config.get("mqtt", "server")
-        mqttport = config.get("mqtt", "port")
-        mqtttopic = config.get("mqtt", "topic")
-        mqttclientid = config.get("mqtt", "clientid")
+        mqttserver = config.get("mqtt", "server", fallback="localhost")
+        mqttport = config.getint("mqtt", "port", fallback=1883)
+        mqtttopic = config.get("mqtt", "topic", fallback="goodwe")
+        mqttclientid = config.get("mqtt", "clientid", fallback="goodwe-usb")
+        mqttusername = config.get("mqtt", "username", fallback="")
+        mqttpasswd = config.get("mqtt", "password", fallback=None) 
 
         loglevel = config.get("inverter", "loglevel")
         interval = config.getint("inverter", "pollinterval")
@@ -68,13 +70,17 @@ class MyDaemon(Daemon):
 
         try:
             client = mqtt.Client(mqttclientid)
-            client.connect(mqttserver)
+            if mqttusername != "":
+                client.username_pw_set(mqttusername, mqttpasswd);
+                logging.debug("Set username -%s-, password -%s-", mqttusername, mqttpasswd)
+            client.connect(mqttserver,port=mqttport )
+            
             client.loop_start()
         except Exception as e:
             logger.error(e)
             return
 
-        logger.info('Connected to MQTT %s', mqttserver)
+        logger.info('Connected to MQTT %s:%s', mqttserver, mqttport)
 
         self.gw = goodwe.GoodWeCommunicator(logger)
 
