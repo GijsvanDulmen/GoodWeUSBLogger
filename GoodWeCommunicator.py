@@ -1,5 +1,5 @@
 from __future__ import absolute_import
-from enum import IntEnum
+from enum import IntEnum, Enum
 
 import time
 from pyudev import Devices, Context, Monitor, MonitorObserver

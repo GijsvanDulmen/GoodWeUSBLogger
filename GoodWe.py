@@ -32,7 +32,7 @@ def logging_rotator(source, dest):
 def logging_setup(level):
     formatter = logging.Formatter('%(asctime)-15s %(funcName)s(%(lineno)d) - %(levelname)s: %(message)s')
 
-    filehandler = logging.handlers.RotatingFileHandler('/home/pi/GoodWeUSBLogger/goodwecomm.log', maxBytes=10*1024*1024,
+    filehandler = logging.handlers.RotatingFileHandler('/var/log/goodwecomm.log', maxBytes=10*1024*1024,
                                                        backupCount=5)
     filehandler.setFormatter(formatter)
 
