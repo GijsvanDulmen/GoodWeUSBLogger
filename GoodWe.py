@@ -95,8 +95,6 @@ class MyDaemon(Daemon):
 
                     inverter = self.gw.getInverter()
 
-                    combinedtopic = mqtttopic + '/' + inverter.serial
-
                     if inverter.addressConfirmed:
 
                         combinedtopic = mqtttopic + '/' + inverter.serial
