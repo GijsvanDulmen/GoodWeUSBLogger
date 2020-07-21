@@ -97,14 +97,19 @@ class MyDaemon(Daemon):
 
                     combinedtopic = mqtttopic + '/' + inverter.serial
 
-                    if inverter.isOnline and self.gw.state == 9:
-                        logger.debug('Publishing telegram to MQTT')
-                        datagram = inverter.toJSON()  # json.dumps(inverter.__dict__)
-                        client.publish(combinedtopic + '/data', datagram)
-                        client.publish(combinedtopic + '/online', 1)
-                    else:
-                        logger.debug('Inverter offline')
-                        client.publish(combinedtopic + '/online', 0)
+                    if inverter.addressConfirmed:
+
+                        combinedtopic = mqtttopic + '/' + inverter.serial
+
+                        if inverter.isOnline:
+                            datagram = inverter.toJSON()
+                            logger.debug('Publishing telegram to MQTT on channel ' + combinedtopic + '/data')
+                            client.publish(combinedtopic + '/data', datagram)
+                            logger.debug('Publishing 1 to MQTT on channel ' + combinedtopic + '/online')
+                            client.publish(combinedtopic + '/online', 1)
+                        else:
+                            logger.debug('Publishing 0 to MQTT on channel ' + combinedtopic + '/online')
+                            client.publish(combinedtopic + '/online', 0)
 
                     lastUpdate = millis()
 
