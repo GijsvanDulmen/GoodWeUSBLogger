@@ -1,0 +1,81 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: goodwe-configuration
+data:
+  goodwe.conf: |
+    [inverter]
+    #loglevel = DEBUG
+    #pollinterval = 2500
+    #vendorId = 0084
+    #modelId = 0041
+    #logfile = /var/log/goodwe.log
+
+    [mqtt]
+    #server = localhost
+    #port = 1883
+    #topic = goodwe
+    #clientid = goodwe-usb
+    #username = 
+    #password = mypassword
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: goodwe-usblogger
+  labels:
+    app: goodwe-usblogger
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app: goodwe-usblogger
+  template:
+    metadata:
+      labels:
+        app: goodwe-usblogger
+      annotations:
+        sidecar.istio.io/inject: "false"
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: kubernetes.io/hostname
+                operator: In
+                values:
+                # hostname of machine with usb logger attached to it
+                - hostname01
+      containers:
+      - name: goodwe-usblogger
+        image: goodweusblogger:v1
+        imagePullPolicy: Always
+        volumeMounts:
+          - mountPath: /dev/bus/usb
+            name: dev-usb
+          - mountPath: /run/dbus
+            name: run-dbus
+          - mountPath: /var/run/dbus
+            name: var-run-dbus
+          - name: goodwe-configuration
+            mountPath: /etc/goodwe.conf
+            subPath: goodwe.conf
+        securityContext:
+            privileged: true
+      volumes:
+      - name: dev-usb
+        hostPath:
+          path: /dev/bus/usb
+      - name: run-dbus
+        hostPath:
+          path: /run/dbus
+      - name: var-run-dbus
+        hostPath:
+          path: /var/run/dbus
+      - name: goodwe-configuration
+        configMap:
+          name: goodwe-configuration
+      terminationGracePeriodSeconds: 15
