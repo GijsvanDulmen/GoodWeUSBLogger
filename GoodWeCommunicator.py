@@ -220,14 +220,27 @@ class GoodWeCommunicator(object):
     def findGoodWeUSBDevice(self, vendorId, modelId):
         context = Context()
 
+        # directory = "/dev/bus/usb/001/"
+        directory = "/dev/"
         usb_list = [d for d in os.listdir("/dev") if d.startswith("hidraw")]
+        # usb_list = [d for d in os.listdir(directory)]
+        self.log.debug(usb_list)
+
         for hidraw in usb_list:
+            # device = directory + hidraw
             device = "/dev/" + hidraw
 
-            udev = Devices.from_device_file(context, device)
+            try:
+                udev = Devices.from_device_file(context, device)
+                self.log.debug(udev['DEVPATH'])
 
-            if udev['DEVPATH'].find(vendorId + ":" + modelId) > -1:
-                return device
+                if udev['DEVPATH'].find(vendorId + ":" + modelId) > -1:
+                    self.log.debug("Using: %s", hidraw)
+                    return device
+
+            except Exception as e:
+                self.log.debug(e)
+                pass
 
         return None
 
