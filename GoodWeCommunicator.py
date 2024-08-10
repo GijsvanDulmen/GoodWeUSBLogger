@@ -313,6 +313,9 @@ class GoodWeCommunicator(object):
         try:
             datstr = self.devfp.read(8)
 
+            if datstr == None:
+                raise IOError
+
             for data in bytearray(datstr):
                 incomingData = data
                 # continuously check for GoodWe HEADER packets.

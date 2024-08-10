@@ -35,7 +35,8 @@ SUBSYSTEM=="input", GROUP="input", MODE="0666"
 SUBSYSTEM=="usb", ATTRS{idVendor}=="0084", ATTRS{idProduct}=="0041", MODE="0660", GROUP="plugdev", SYMLINK+="goodwe"
 ```
 
-Create file _/etc/goodwe.conf_:
+Create file _/etc/goodwe/goodwe.conf_:
+Create directory _/var/log/goodwe_;
 
 ```
 [inverter]
