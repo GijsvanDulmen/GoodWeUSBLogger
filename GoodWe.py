@@ -45,7 +45,7 @@ class GoodWeProcessor(object):
             logging.basicConfig(format='%(asctime)-15s %(funcName)s(%(lineno)d) - %(levelname)s: %(message)s', filename=logfile, level=numeric_level)
         
         try:
-            client = mqtt.Client(mqttclientid)
+            client = mqtt.Client(mqtt.CallbackAPIVersion.VERSION1, mqttclientid)
             if mqttusername != "":
                 client.username_pw_set(mqttusername, mqttpasswd);
                 logging.debug("Set username -%s-, password -%s-", mqttusername, mqttpasswd)
